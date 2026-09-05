@@ -1,10 +1,59 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
 import { api } from '../frontend/src/services/api.js';
 
-const PORT = 5195;
+const PORT = 5198;
+const DIST_DIR = path.resolve('dist');
+const PUBLIC_DIR = path.resolve('frontend/public');
+
+// Lightweight static file server for testing
+function startTestServer(port) {
+  return new Promise((resolve) => {
+    const server = http.createServer((req, res) => {
+      let reqPath = req.url.split('?')[0];
+      if (reqPath === '/') reqPath = '/index.html';
+
+      // Check dist first, then public
+      let filePath = path.join(DIST_DIR, reqPath);
+      if (!fs.existsSync(filePath)) {
+        filePath = path.join(PUBLIC_DIR, reqPath);
+      }
+
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeTypes = {
+          '.html': 'text/html',
+          '.js': 'text/javascript',
+          '.css': 'text/css',
+          '.json': 'application/json',
+          '.png': 'image/png',
+          '.jpg': 'image/jpeg',
+          '.svg': 'image/svg+xml'
+        };
+        const contentType = mimeTypes[ext] || 'application/octet-stream';
+        res.writeHead(200, { 'Content-Type': contentType });
+        fs.createReadStream(filePath).pipe(res);
+      } else {
+        // SPA fallback
+        const indexPath = fs.existsSync(path.join(DIST_DIR, 'index.html'))
+          ? path.join(DIST_DIR, 'index.html')
+          : path.join(PUBLIC_DIR, 'index.html');
+        if (fs.existsSync(indexPath)) {
+          res.writeHead(200, { 'Content-Type': 'text/html' });
+          fs.createReadStream(indexPath).pipe(res);
+        } else {
+          res.writeHead(404, { 'Content-Type': 'text/plain' });
+          res.end('Not Found');
+        }
+      }
+    });
+
+    server.listen(port, () => {
+      resolve(server);
+    });
+  });
+}
 
 async function checkUrl(url) {
   return new Promise((resolve) => {
@@ -25,7 +74,7 @@ async function checkUrl(url) {
       resolve({ statusCode: 500, error: err.message });
     });
 
-    req.setTimeout(5000, () => {
+    req.setTimeout(3000, () => {
       req.destroy();
       resolve({ statusCode: 408, error: 'Timeout' });
     });
@@ -35,12 +84,8 @@ async function checkUrl(url) {
 async function runTestSuite() {
   console.log('=== Starting Full 220-Template Verification Test Suite ===\n');
 
-  // Start Vite Preview server
-  console.log(`Starting preview server on port ${PORT}...`);
-  const serverProcess = exec(`npx vite preview --port ${PORT}`, { cwd: 'frontend' });
-
-  // Wait 3 seconds for server to boot
-  await new Promise(r => setTimeout(r, 3000));
+  const server = await startTestServer(PORT);
+  console.log(`Test server running on port ${PORT}...`);
 
   try {
     const templates = await api.getTemplates();
@@ -96,15 +141,12 @@ async function runTestSuite() {
     if (failures.length > 0) {
       console.error('FAILED TEMPLATES LIST:');
       console.error(JSON.stringify(failures, null, 2));
+      process.exitCode = 1;
     } else {
       console.log('🎉 ALL 220 WEBSITE TEMPLATES ARE 100% OPERATIONAL AND WORKING!\n');
     }
   } finally {
-    serverProcess.kill();
-    // On Windows ensure any child processes on the port are killed
-    if (process.platform === 'win32') {
-      exec(`taskkill /F /T /PID ${serverProcess.pid}`);
-    }
+    server.close();
   }
 }
 

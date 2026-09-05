@@ -1,0 +1,17 @@
+# Vercel Deployment Optimization Ignore File
+
+# Backend Java Spring Boot & SQL (Not part of frontend deployment)
+backend/
+database/
+
+# Root template source archive (all 220 live templates are located in frontend/public/templates/)
+templates/
+
+# Dev & test scripts (not required during static edge serving)
+scripts/test_all_templates.js
+
+# Build caches & logs
+*.log
+.cache/
+.DS_Store
+Thumbs.db
