@@ -9,11 +9,18 @@ try {
   const srcDist = path.resolve('frontend/dist');
   const destDist = path.resolve('dist');
 
-  // 1. Build frontend SPA
+  // 1. Ensure frontend dependencies exist
+  const frontendNodeModules = path.resolve(frontendDir, 'node_modules');
+  if (!fs.existsSync(frontendNodeModules)) {
+    console.log('Installing frontend dependencies...');
+    execSync('npm install', { cwd: frontendDir, stdio: 'inherit' });
+  }
+
+  // 2. Build frontend SPA
   console.log('Building frontend production bundle...');
   execSync('npm run build', { cwd: frontendDir, stdio: 'inherit' });
 
-  // 2. Mirror frontend/dist to root dist if needed
+  // 3. Mirror frontend/dist to root dist
   console.log('Syncing distribution artifacts to root dist...');
   if (fs.existsSync(destDist)) {
     fs.rmSync(destDist, { recursive: true, force: true });

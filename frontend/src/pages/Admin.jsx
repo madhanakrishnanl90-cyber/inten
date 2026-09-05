@@ -30,15 +30,6 @@ export default function Admin({ user }) {
   const [pagesCount, setPagesCount] = useState('5');
   const [tagsInput, setTagsInput] = useState('');
 
-  useEffect(() => {
-    if (!user || user.role !== 'ROLE_ADMIN') {
-      alert('Access denied: Site Administrator credentials required!');
-      navigate('/dashboard');
-      return;
-    }
-    loadData();
-  }, [user, navigate]);
-
   const loadData = () => {
     setLoading(true);
     Promise.all([
@@ -55,6 +46,15 @@ export default function Admin({ user }) {
       setLoading(false);
     });
   };
+
+  useEffect(() => {
+    if (!user || user.role !== 'ROLE_ADMIN') {
+      alert('Access denied: Site Administrator credentials required!');
+      navigate('/dashboard');
+      return;
+    }
+    loadData();
+  }, [user, navigate]);
 
   const handleOpenCreateModal = () => {
     setEditingId(null);

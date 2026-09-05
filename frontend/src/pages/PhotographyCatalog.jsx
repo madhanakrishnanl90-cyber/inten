@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import JSZip from 'jszip';
 import { Search } from 'lucide-react';
 
 export default function PhotographyCatalog() {
-  const [downloadingSlug, setDownloadingSlug] = useState('');
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,143 +111,6 @@ export default function PhotographyCatalog() {
     if (sortBy === 'z-a') return b.name.localeCompare(a.name);
     return 0;
   });
-
-  const TEMPLATE_FILES = {
-    'photography-1': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'snapfolio-template': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'photography-2': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'photo-template': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'photography-3': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'wedding-template': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'photography-4': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/About.jsx', 'src/components/FeaturedStories.jsx', 'src/components/Footer.jsx',
-      'src/components/Gallery.jsx', 'src/components/Hero.jsx', 'src/components/Navbar.jsx',
-      'src/components/ScrollReveal.jsx', 'src/components/Services.jsx', 'src/components/Testimonials.jsx',
-      'src/data/config.js'
-    ],
-    'cinematic-wedding': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/About.jsx', 'src/components/FeaturedStories.jsx', 'src/components/Footer.jsx',
-      'src/components/Gallery.jsx', 'src/components/Hero.jsx', 'src/components/Navbar.jsx',
-      'src/components/ScrollReveal.jsx', 'src/components/Services.jsx', 'src/components/Testimonials.jsx',
-      'src/data/config.js'
-    ],
-    'photography-5': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/CollectionCircle.jsx', 'src/components/CollectionsGrid.jsx', 'src/components/FeatureBlock.jsx',
-      'src/components/Footer.jsx', 'src/components/Hero.jsx', 'src/components/Navbar.jsx',
-      'src/components/Newsletter.jsx', 'src/data/config.js'
-    ],
-    'fineart-template': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/CollectionCircle.jsx', 'src/components/CollectionsGrid.jsx', 'src/components/FeatureBlock.jsx',
-      'src/components/Footer.jsx', 'src/components/Hero.jsx', 'src/components/Navbar.jsx',
-      'src/components/Newsletter.jsx', 'src/data/config.js'
-    ],
-    'photography-6': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/AboutSection.jsx', 'src/components/CameraModel.jsx', 'src/components/ContactSection.jsx',
-      'src/components/Footer.jsx', 'src/components/Hero3DScene.jsx', 'src/components/HeroContent.jsx',
-      'src/components/HeroGrid.jsx', 'src/components/Navbar.jsx', 'src/components/ParticleField.jsx',
-      'src/components/Scene3D.jsx', 'src/components/ServicesSection.jsx'
-    ],
-    'kairo-template': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/AboutSection.jsx', 'src/components/CameraModel.jsx', 'src/components/ContactSection.jsx',
-      'src/components/Footer.jsx', 'src/components/Hero3DScene.jsx', 'src/components/HeroContent.jsx',
-      'src/components/HeroGrid.jsx', 'src/components/Navbar.jsx', 'src/components/ParticleField.jsx',
-      'src/components/Scene3D.jsx', 'src/components/ServicesSection.jsx'
-    ],
-    'photography-7': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/AboutSection.jsx', 'src/components/ContactSection.jsx', 'src/components/Footer.jsx',
-      'src/components/HeroContent.jsx', 'src/components/Navbar.jsx', 'src/components/ParticleField.jsx',
-      'src/components/PortfolioGrid.jsx', 'src/components/Scene3D.jsx', 'src/components/ServicesSection.jsx',
-      'src/components/Testimonials.jsx'
-    ],
-    'isteady-template': [
-      'package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css',
-      'src/components/AboutSection.jsx', 'src/components/ContactSection.jsx', 'src/components/Footer.jsx',
-      'src/components/HeroContent.jsx', 'src/components/Navbar.jsx', 'src/components/ParticleField.jsx',
-      'src/components/PortfolioGrid.jsx', 'src/components/Scene3D.jsx', 'src/components/ServicesSection.jsx',
-      'src/components/Testimonials.jsx'
-    ],
-    'photography-8': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'sage-shutter-photography': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'photography-9': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'blush-lens-photography': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'photography-10': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css'],
-    'aether-studio-photography': ['package.json', 'vite.config.js', 'index.html', 'src/main.jsx', 'src/App.jsx', 'src/index.css']
-  };
-
-  const handleDownload = async (slug, templateName) => {
-    setDownloadingSlug(slug);
-
-    const zip = new JSZip();
-    const filesToDownload = TEMPLATE_FILES[slug] || [];
-
-    // Map slug to directory folder name if they differ
-    const folderMapping = {
-      'snapfolio-template': 'photography-1',
-      'photo-template': 'photography-2',
-      'wedding-template': 'photography-3',
-      'cinematic-wedding': 'photography-4',
-      'fineart-template': 'photography-5',
-      'kairo-template': 'photography-6',
-      'isteady-template': 'photography-7',
-      'sage-shutter-photography': 'photography-8',
-      'blush-lens-photography': 'photography-9',
-      'aether-studio-photography': 'photography-10'
-    };
-    const folderName = folderMapping[slug] || slug;
-
-    try {
-      // 1. Fetch React project files
-      for (const filePath of filesToDownload) {
-        const fileUrl = `/templates/photography/${folderName}/${filePath}`;
-        const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error(`Failed to fetch ${filePath}`);
-        const text = await response.text();
-        zip.file(filePath, text);
-      }
-      
-      // 2. Fetch and add frames sequence binary files for the photo-template
-      if (slug === 'photo-template') {
-        const framesFolder = zip.folder('frames');
-        for (let i = 0; i < 100; i++) {
-          const paddedIndex = String(i).padStart(6, '0');
-          const frameName = `frame_${paddedIndex}.jpg`;
-          const frameUrl = `/templates/photography/${slug}/frames/${frameName}`;
-          
-          try {
-            const response = await fetch(frameUrl);
-            if (response.ok) {
-              const arrayBuffer = await response.arrayBuffer();
-              framesFolder.file(frameName, arrayBuffer);
-            }
-          } catch (e) {
-            console.warn(`Frame ${frameName} fetch skipped:`, e);
-          }
-        }
-      }
-      
-      const blob = await zip.generateAsync({ type: 'blob' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${slug}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      showToast(`${templateName} zip downloaded successfully!`);
-    } catch (err) {
-      console.error(err);
-      showToast(`Failed to bundle ${templateName} files.`, 'error');
-    } finally {
-      setDownloadingSlug('');
-    }
-  };
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out', padding: '30px 0', minHeight: '60vh', position: 'relative' }}>
