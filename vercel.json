@@ -3,8 +3,16 @@
   "buildCommand": "node build.js",
   "outputDirectory": "dist",
   "framework": "vite",
-  "cleanUrls": true,
+  "cleanUrls": false,
   "rewrites": [
+    {
+      "source": "/templates/:category/:template",
+      "destination": "/templates/:category/:template/index.html"
+    },
+    {
+      "source": "/templates/:category/:template/",
+      "destination": "/templates/:category/:template/index.html"
+    },
     {
       "source": "/templates/(.*)",
       "destination": "/templates/$1"
